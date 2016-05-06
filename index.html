@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>Micro by aerth</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">Micro</h1>
+      <h2 class="project-tagline">A modern and intuitive terminal-based text editor</h2>
+      <a href="https://github.com/aerth/micro" class="btn">View on GitHub</a>
+      <a href="https://github.com/aerth/micro/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/aerth/micro/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+      <h1>
+<a id="micro" class="anchor" href="#micro" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Micro</h1>
+
+<p><a href="https://travis-ci.org/zyedidia/micro"><img src="https://travis-ci.org/zyedidia/micro.svg?branch=master" alt="Build Status"></a>
+<a href="http://goreportcard.com/report/zyedidia/micro"><img src="http://goreportcard.com/badge/zyedidia/micro" alt="Go Report Card"></a>
+<a href="https://gitter.im/zyedidia/micro?utm_source=badge&amp;utm_medium=badge&amp;utm_campaign=pr-badge&amp;utm_content=badge"><img src="https://badges.gitter.im/zyedidia/micro.svg" alt="Join the chat at https://gitter.im/zyedidia/micro"></a>
+<a href="https://github.com/zyedidia/micro/blob/master/LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="MIT License"></a></p>
+
+<blockquote>
+<p>Micro is very much a work in progress</p>
+</blockquote>
+
+<p>Micro is a terminal-based text editor that aims to be easy to use and intuitive, while also taking advantage of the full capabilities
+of modern terminals.</p>
+
+<p>Here is a picture of micro editing its source code.</p>
+
+<p><img src="./screenshot.png" alt="Screenshot"></p>
+
+<h1>
+<a id="features" class="anchor" href="#features" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Features</h1>
+
+<ul>
+<li>Easy to use</li>
+<li>Common keybindings (ctrl-s, ctrl-c, ctrl-v, ctrl-z...)</li>
+<li>Extremely good mouse support</li>
+<li>Cross platform</li>
+<li>Syntax highlighting (in over <a href="runtime/syntax">75 languages</a>!)</li>
+<li>Colorscheme support</li>
+<li>True color support (set the <code>MICRO_TRUECOLOR</code> env variable to 1 to enable it)</li>
+<li>Search and replace</li>
+<li>Sane defaults</li>
+<li>Undo and redo</li>
+<li>Unicode support</li>
+<li>Copy and paste with the system clipboard</li>
+<li>Small and simple</li>
+<li>Configurable</li>
+</ul>
+
+<p>If you'd like to see what has been implemented, and what I plan on implementing soon-ish, see the <a href="todolist.md">todo list</a></p>
+
+<h1>
+<a id="installation" class="anchor" href="#installation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Installation</h1>
+
+<h3>
+<a id="homebrew" class="anchor" href="#homebrew" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Homebrew</h3>
+
+<p>If you are on Mac, you can install micro using Homebrew:</p>
+
+<pre><code>brew tap zyedidia/micro
+brew install --devel micro
+</code></pre>
+
+<p>Micro is devel-only for now because there is no released version.</p>
+
+<h3>
+<a id="prebuilt-binaries" class="anchor" href="#prebuilt-binaries" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Prebuilt binaries</h3>
+
+<table>
+<thead>
+<tr>
+<th>Version</th>
+<th>Mac</th>
+<th>Linux 64</th>
+<th>Linux 32</th>
+<th>Linux Arm</th>
+<th>Windows 64</th>
+<th>Windows 32</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Nightly Binaries</td>
+<td><a href="http://zbyedidia.webfactional.com/micro/binaries/micro-osx.tar.gz">Mac OS X</a></td>
+<td><a href="http://zbyedidia.webfactional.com/micro/binaries/micro-linux64.tar.gz">Linux 64</a></td>
+<td><a href="http://zbyedidia.webfactional.com/micro/binaries/micro-linux32.tar.gz">Linux 32</a></td>
+<td><a href="http://zbyedidia.webfactional.com/micro/binaries/micro-linux-arm.tar.gz">Linux Arm</a></td>
+<td><a href="http://zbyedidia.webfactional.com/micro/binaries/micro-win64.zip">Windows 64</a></td>
+<td><a href="http://zbyedidia.webfactional.com/micro/binaries/micro-win32.zip">Windows 32</a></td>
+</tr>
+</tbody>
+</table>
+
+<p>To run the micro binary just run <code>./bin/micro</code> (you may want to place the binary on your path for ease of use).</p>
+
+<h3>
+<a id="building-from-source" class="anchor" href="#building-from-source" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Building from source</h3>
+
+<p>Micro is made in Go so you must have Go installed on your system to build it.</p>
+
+<p>Make sure that you have Go version 1.4 or greater.</p>
+
+<p>You can simply <code>go get</code> it.</p>
+
+<pre><code>go get -u github.com/zyedidia/micro/cmd/micro
+</code></pre>
+
+<h3>
+<a id="clipboard-support" class="anchor" href="#clipboard-support" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Clipboard support</h3>
+
+<p>On Linux, clipboard support requires 'xclip' or 'xsel' command to be installed. For Ubuntu:</p>
+
+<pre><code>$ sudo apt-get install xclip
+</code></pre>
+
+<p>If you don't have xclip or xsel, micro will use an internal clipboard for copy and paste, but it won't work with external applications.</p>
+
+<h1>
+<a id="usage" class="anchor" href="#usage" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Usage</h1>
+
+<p>Once you have built the editor, simply start it by running <code>micro path/to/file.txt</code> or simply <code>micro</code> to open an empty buffer.</p>
+
+<p>Micro also supports creating buffers from <code>stdin</code>:</p>
+
+<pre><code>$ ifconfig | micro
+</code></pre>
+
+<p>You can move the cursor around with the arrow keys and mouse.</p>
+
+<p>You can also use the mouse to manipulate the text. Simply clicking and dragging will select text. You can also double click
+to enable word selection, and triple click to enable line selection.</p>
+
+<p>You can run <code>$ micro -version</code> to get the version number. Since there is no release, this just gives you the
+commit hash. The version is unknown if you built with <code>go get</code>, instead use <code>make install</code> or <code>make</code> to get a binary
+with a version number defined.</p>
+
+<h4>
+<a id="help-text" class="anchor" href="#help-text" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Help text</h4>
+
+<p>See the <a href="./runtime/help/help.md">help text</a> for information about keybindings, editor commands, colorschemes and
+configuration options.</p>
+
+<h1>
+<a id="contributing" class="anchor" href="#contributing" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Contributing</h1>
+
+<p>If you find any bugs, please report them! I am also happy to accept pull requests from anyone.</p>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/aerth/micro">Micro</a> is maintained by <a href="https://github.com/aerth">aerth</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+  
+  </body>
+</html>
