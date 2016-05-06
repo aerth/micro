@@ -91,8 +91,7 @@ func (c *Cursor) DeleteSelection() {
 	if c.curSelection[0] > c.curSelection[1] {
 		c.v.eh.Remove(c.curSelection[1], c.curSelection[0])
 		c.SetLoc(c.curSelection[1])
-	} else if c.GetSelection() == "" {
-		return
+
 	} else {
 		c.v.eh.Remove(c.curSelection[0], c.curSelection[1])
 		c.SetLoc(c.curSelection[0])
@@ -101,8 +100,14 @@ func (c *Cursor) DeleteSelection() {
 
 // GetSelection returns the cursor's selection
 func (c *Cursor) GetSelection() string {
+	if !c.HasSelection() {
+		return ""
+	}
 	if c.curSelection[0] > c.curSelection[1] {
 		return c.v.buf.r.Report(c.curSelection[1]+1, c.curSelection[0]-c.curSelection[1])
+	}
+	if c.curSelection[0] == c.curSelection[1] {
+		return ""
 	}
 	return c.v.buf.r.Report(c.curSelection[0]+1, c.curSelection[1]-c.curSelection[0])
 }

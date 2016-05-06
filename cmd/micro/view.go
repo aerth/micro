@@ -50,6 +50,7 @@ type View struct {
 	// This stores when the last click was
 	// This is useful for detecting double and triple clicks
 	lastClickTime time.Time
+	lastKeyTime   time.Time
 
 	// lastCutTime stores when the last ctrl+k was issued.
 	// It is used for clearing the clipboard to replace it with fresh cut lines.
@@ -254,13 +255,14 @@ func (v *View) HandleEvent(event tcell.Event) {
 		v.Resize(e.Size())
 	case *tcell.EventKey:
 		if e.Key() == tcell.KeyRune {
-
+			v.lastKeyTime = time.Now()
 			// Pause for mouse clicks
-			if time.Since(v.lastClickTime) < time.Second/2 {
+			if time.Since(v.lastClickTime) < time.Second/4 || !v.mouseReleased {
 				break
 			}
+
 			// Insert a character
-			if v.cursor.HasSelection() {
+			if v.cursor.HasSelection() && v.mouseReleased {
 				v.cursor.DeleteSelection()
 				v.cursor.ResetSelection()
 			}
@@ -292,7 +294,7 @@ func (v *View) HandleEvent(event tcell.Event) {
 		switch button {
 		case tcell.Button1:
 			// Left click
-			if v.mouseReleased && !e.HasMotion() {
+			if v.mouseReleased && !e.HasMotion() && time.Since(v.lastKeyTime) > time.Second/4 {
 				v.MoveToMouseClick(x, y)
 				if time.Since(v.lastClickTime)/time.Millisecond < doubleClickThreshold {
 					if v.doubleClick {
