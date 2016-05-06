@@ -254,6 +254,11 @@ func (v *View) HandleEvent(event tcell.Event) {
 		v.Resize(e.Size())
 	case *tcell.EventKey:
 		if e.Key() == tcell.KeyRune {
+
+			// Pause for mouse clicks
+			if time.Since(v.lastClickTime) < time.Second/2 {
+				break
+			}
 			// Insert a character
 			if v.cursor.HasSelection() {
 				v.cursor.DeleteSelection()
