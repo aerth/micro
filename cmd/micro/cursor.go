@@ -18,7 +18,9 @@ func FromCharPosStart(startLoc, startX, startY, loc int, buf *Buffer) (int, int)
 	for charNum+lineLen <= loc {
 		charNum += lineLen
 		y++
-		lineLen = Count(buf.lines[y]) + 1
+		if Count(buf.lines[y])+1 < buf.numLines {
+			lineLen = Count(buf.lines[y]) + 1
+		}
 	}
 	x = loc - charNum
 
@@ -64,6 +66,10 @@ type Cursor struct {
 // and not x, y location
 // It's just a simple wrapper of FromCharPos
 func (c *Cursor) SetLoc(loc int) {
+	if c.v.buf.r.Len() == 0 {
+		c.x, c.y = 0, 0
+	}
+	return
 	c.x, c.y = FromCharPos(loc, c.v.buf)
 	c.lastVisualX = c.GetVisualX()
 }
@@ -90,7 +96,7 @@ func (c *Cursor) HasSelection() bool {
 func (c *Cursor) DeleteSelection() {
 	if c.curSelection[0] > c.curSelection[1] {
 		c.v.eh.Remove(c.curSelection[1], c.curSelection[0])
-		c.SetLoc(c.curSelection[1])
+		c.SetLoc(c.curSelection[0])
 
 	} else {
 		c.v.eh.Remove(c.curSelection[0], c.curSelection[1])
