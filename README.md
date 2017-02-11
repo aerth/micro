@@ -67,12 +67,18 @@ and you'll see all the stable releases with the corresponding binaries.
 
 If you'd like to see more information after installing micro, run `micro -version`.
 
-### Homebrew
+### Package Managers
 
-You can also install micro using Homebrew on Mac:
+You can install micro using Homebrew on Mac:
 
 ```
 brew install micro
+```
+
+On Windows, you can install micro through Chocolatey:
+
+```
+choco install micro
 ```
 
 ### Building from source
@@ -158,6 +164,7 @@ a brief introduction to the more powerful configuration features micro offers.
 
 If you find any bugs, please report them! I am also happy to accept pull requests from anyone.
 
-You can use the [GitHub issue tracker](https://github.com/zyedidia/micro/issues) to report bugs, ask questions, or suggest new features.
+You can use the [GitHub issue tracker](https://github.com/zyedidia/micro/issues)
+to report bugs, ask questions, or suggest new features.
 
 For a more informal setting to discuss the editor, you can join the [Gitter chat](https://gitter.im/zyedidia/micro).
