@@ -1,24 +1,21 @@
-// +build !offline
+// +build offline
 
 package main
 
 import (
-	"archive/zip"
-	"bytes"
-	"fmt"
-	"io"
-	"io/ioutil"
-	"net/http"
-	"os"
-	"path/filepath"
-	"sort"
-	"strings"
-	"sync"
-
-	"github.com/blang/semver"
-	"github.com/yuin/gopher-lua"
-	"github.com/zyedidia/json5/encoding/json5"
+  "fmt"
+  "bytes"
+  "sync"
+  "strings"
+  "sort"
+  "os"
+  "path/filepath"
+  "github.com/yuin/gopher-lua"
+  "github.com/zyedidia/json5/encoding/json5"
+  "github.com/blang/semver"
 )
+
+var ErrNotBuiltIn = fmt.Errorf("Network disabled (built with )")
 
 var (
 	allPluginPackages PluginPackages
@@ -119,51 +116,6 @@ func (pc PluginChannels) Fetch() PluginPackages {
 		return pc[i].Fetch()
 	})
 }
-
-// Fetch retrieves all available PluginPackages from the given channel
-func (pc PluginChannel) Fetch() PluginPackages {
-	// messenger.AddLog(fmt.Sprintf("Fetching channel: %q", string(pc)))
-	resp, err := http.Get(string(pc))
-	if err != nil {
-		TermMessage("Failed to query plugin channel:\n", err)
-		return PluginPackages{}
-	}
-	defer resp.Body.Close()
-	decoder := json5.NewDecoder(resp.Body)
-
-	var repositories []PluginRepository
-	if err := decoder.Decode(&repositories); err != nil {
-		TermMessage("Failed to decode channel data:\n", err)
-		return PluginPackages{}
-	}
-	return fetchAllSources(len(repositories), func(i int) PluginPackages {
-		return repositories[i].Fetch()
-	})
-}
-
-// Fetch retrieves all available PluginPackages from the given repository
-func (pr PluginRepository) Fetch() PluginPackages {
-	// messenger.AddLog(fmt.Sprintf("Fetching repository: %q", string(pr)))
-	resp, err := http.Get(string(pr))
-	if err != nil {
-		TermMessage("Failed to query plugin repository:\n", err)
-		return PluginPackages{}
-	}
-	defer resp.Body.Close()
-	decoder := json5.NewDecoder(resp.Body)
-
-	var plugins PluginPackages
-	if err := decoder.Decode(&plugins); err != nil {
-		TermMessage("Failed to decode repository data:\n", err)
-		return PluginPackages{}
-	}
-	if len(plugins) > 0 {
-		return PluginPackages{plugins[0]}
-	}
-	return nil
-	// return plugins
-}
-
 // UnmarshalJSON unmarshals raw json to a PluginVersion
 func (pv *PluginVersion) UnmarshalJSON(data []byte) error {
 	var values struct {
@@ -383,77 +335,6 @@ func GetInstalledPluginVersion(name string) string {
 	return ""
 }
 
-// DownloadAndInstall downloads and installs the given plugin and version
-func (pv *PluginVersion) DownloadAndInstall() error {
-	messenger.AddLog(fmt.Sprintf("Downloading %q (%s) from %q", pv.pack.Name, pv.Version, pv.Url))
-	resp, err := http.Get(pv.Url)
-	if err != nil {
-		return err
-	}
-	defer resp.Body.Close()
-	data, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return err
-	}
-	zipbuf := bytes.NewReader(data)
-	z, err := zip.NewReader(zipbuf, zipbuf.Size())
-	if err != nil {
-		return err
-	}
-	targetDir := filepath.Join(configDir, "plugins", pv.pack.Name)
-	dirPerm := os.FileMode(0755)
-	if err = os.MkdirAll(targetDir, dirPerm); err != nil {
-		return err
-	}
-
-	// Check if all files in zip are in the same directory.
-	// this might be the case if the plugin zip contains the whole plugin dir
-	// instead of its content.
-	var prefix string
-	allPrefixed := false
-	for i, f := range z.File {
-		parts := strings.Split(f.Name, "/")
-		if i == 0 {
-			prefix = parts[0]
-		} else if parts[0] != prefix {
-			allPrefixed = false
-			break
-		} else {
-			// switch to true since we have at least a second file
-			allPrefixed = true
-		}
-	}
-
-	for _, f := range z.File {
-		parts := strings.Split(f.Name, "/")
-		if allPrefixed {
-			parts = parts[1:]
-		}
-
-		targetName := filepath.Join(targetDir, filepath.Join(parts...))
-		if f.FileInfo().IsDir() {
-			if err := os.MkdirAll(targetName, dirPerm); err != nil {
-				return err
-			}
-		} else {
-			content, err := f.Open()
-			if err != nil {
-				return err
-			}
-			defer content.Close()
-			target, err := os.Create(targetName)
-			if err != nil {
-				return err
-			}
-			defer target.Close()
-			if _, err = io.Copy(target, content); err != nil {
-				return err
-			}
-		}
-	}
-	return nil
-}
-
 func (pl PluginPackages) Get(name string) *PluginPackage {
 	for _, p := range pl {
 		if p.Name == name {
@@ -583,35 +464,15 @@ func (pl PluginPackage) Install() {
 }
 
 // UpdatePlugins updates the given plugins
-func UpdatePlugins(plugins []string) {
-	// if no plugins are specified, update all installed plugins.
-	if len(plugins) == 0 {
-		for name := range loadedPlugins {
-			plugins = append(plugins, name)
-		}
-	}
+func UpdatePlugins(plugins []string) {}
 
-	messenger.AddLog("Checking for plugin updates")
-	microVersion := PluginVersions{
-		newStaticPluginVersion(CorePluginName, Version),
-	}
-
-	var updates = make(PluginDependencies, 0)
-	for _, name := range plugins {
-		pv := GetInstalledPluginVersion(name)
-		r, err := semver.ParseRange(">=" + pv) // Try to get newer versions.
-		if err == nil {
-			updates = append(updates, &PluginDependency{
-				Name:  name,
-				Range: r,
-			})
-		}
-	}
-
-	selected, err := GetAllPluginPackages().Resolve(microVersion, updates)
-	if err != nil {
-		TermMessage(err)
-		return
-	}
-	selected.install()
+// DownloadAndInstall downloads and installs the given plugin and version
+func (pv *PluginVersion) DownloadAndInstall() error {
+    return ErrNotBuiltIn
 }
+
+// Fetch retrieves all available PluginPackages from the given channel
+func (pc PluginChannel) Fetch() PluginPackages { return nil }
+
+// Fetch retrieves all available PluginPackages from the given repository
+func (pr PluginRepository) Fetch() PluginPackages { return nil }
