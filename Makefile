@@ -49,3 +49,8 @@ test:
 
 clean:
 	rm -f micro
+
+offline:
+	go get -v ./cmd/micro
+	go build -tags offline -ldflags "-s -w -X main.Version=$(VERSION) -X main.CommitHash=$(HASH) -X 'main.CompileDate=$(DATE)' $(ADDITIONAL_GO_LINKER_FLAGS)" ./cmd/micro
+	
