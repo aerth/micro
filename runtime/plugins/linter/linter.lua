@@ -19,7 +19,7 @@ function runLinter()
     	devnull = "/dev/null"
     end
     if ft == "go" then
-        lint("gobuild", "go", {"build", "-o", devnull}, "%f:%l: %m")
+        lint("gobuild", "go", {"build", "-o", devnull, file}, "%f:%l: %m")
         lint("golint", "golint", {file}, "%f:%l:%d+: %m")
     elseif ft == "lua" then
         lint("luacheck", "luacheck", {"--no-color", file}, "%f:%l:%d+: %m")
